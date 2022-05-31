@@ -35,11 +35,11 @@ pipeline {
                   helm version
                   mkdir _output
 
-                  # Lint & package charts
+                  # Lint & package charts (all at once)
                   find ./charts -maxdepth 1 -mindepth 1 -type d -print0 | \
-                    xargs -0 -i sh -c 'helm lint {} && helm package -d _output {}'
+                    xargs -0 sh -c 'helm lint "$@" && helm package -d _output "$@"' sh
 
-                  # Upload charts
+                  # Upload charts (one by one)
                   find ./_output -type f -print0 | \
                     xargs -0 -i curl -fsS -X POST \
                       --upload-file {} \
