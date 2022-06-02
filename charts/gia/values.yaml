@@ -78,32 +78,33 @@ api:
         secretName: gia-api-tls
   serviceMonitor:
     create: true
+  argocdHook: true
   jobs:
       # This jobs will be created and executed on every sync
       # at the same time as the application of the manifests.
     - name: migrate
       enabled: true
-      argocdHook: true
       hookWeight: 0
       args: ["python", "manage.py", "migrate"]
     - name: invalidate
       enabled: true
-      argocdHook: true
       hookWeight: 1
       args: ["python", "manage.py", "invalidate", "all"]
       # This jobs will only be created and executed once.
       # https://argo-cd.readthedocs.io/en/stable/user-guide/resource_hooks/#generate-name
     - name: init-loaddata
       enabled: true
-      hook: post-install
-      hookDeletePolicy: hook-failed
       hookWeight: 2
+      hook: PostSync
+      hookDeletePolicy: HookFailed
+      helmHook: post-install
       args: ["python", "manage.py", "loaddata", "datasource"]
     - name: init-runjobs
       enabled: true
-      hook: post-install
       hookWeight: 3
-      hookDeletePolicy: hook-failed
+      hook: PostSync
+      hookDeletePolicy: HookFailed
+      helmHook: post-install
       args: ["python", "manage.py", "runjobs", "hourly"]
   cronjobs:
     - name: runjobs

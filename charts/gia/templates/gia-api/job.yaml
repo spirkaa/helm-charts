@@ -8,13 +8,13 @@ metadata:
   labels:
     {{- include "gia.labels" (dict "context" $ "component" $.Values.api.name "name" $.Values.api.name) | nindent 4 }}
   annotations:
-    {{- if $job.argocdHook }}
-    argocd.argoproj.io/hook: Sync
-    argocd.argoproj.io/hook-delete-policy: {{ default "BeforeHookCreation,HookSucceeded" $job.argocdHookDeletePolicy }}
+    {{- if $.Values.api.argocdHook }}
+    argocd.argoproj.io/hook: {{ default "Sync" $job.hook }}
+    argocd.argoproj.io/hook-delete-policy: {{ default "BeforeHookCreation,HookSucceeded" $job.hookDeletePolicy }}
     argocd.argoproj.io/sync-wave: {{ $job.hookWeight | default "0" | quote }}
     {{- else }}
-    "helm.sh/hook": {{ default "post-install,post-upgrade" $job.hook }}
-    "helm.sh/hook-delete-policy": {{ default "before-hook-creation,hook-succeeded" $job.hookDeletePolicy }}
+    "helm.sh/hook": {{ default "post-install,post-upgrade" $job.helmHook }}
+    "helm.sh/hook-delete-policy": {{ default "before-hook-creation,hook-succeeded" $job.helmHookDeletePolicy }}
     "helm.sh/hook-weight": {{ $job.hookWeight | default "0" | quote }}
     {{- end }}
 spec:
