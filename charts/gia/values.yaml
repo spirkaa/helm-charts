@@ -1,0 +1,177 @@
+nameOverride: ""
+fullnameOverride: ""
+
+global:
+  imagePullSecrets:
+    - name: regcred
+  imagePullPolicy: Always
+  podAnnotations: {}
+  podSecurityContext: {}
+    # fsGroup: 1000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #     - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+api:
+  name: api
+  replicaCount: 2
+  image:
+    repository: git.devmem.ru/projects/gia-api
+    tag: ""
+  containerPort: 5000
+  env:
+    - name: POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    - name: TZ
+      value: "Europe/Moscow"
+    - name: DJANGO_SETTINGS_MODULE
+      value: "config.settings.production"
+    - name: DJANGO_ALLOWED_HOSTS
+      value: "gia-api.k8s.devmem.ru"
+    - name: DJANGO_LOG_LEVEL
+      value: "DEBUG"
+    - name: DJANGO_ADMIN_URL
+      value: "a/"
+    - name: DJANGO_ADMIN_MAIL
+      value: "piv@devmem.ru"
+    - name: DJANGO_EMAIL_SUBJECT_PREFIX
+      value: "[gia.devmem.ru]"
+    - name: PROMETHEUS_MULTIPROC_DIR
+      value: "/tmp"
+    - name: DJANGO_CACHE_URL
+      value: "redis://gia-redis-master:6379/1"
+    - name: DJANGO_DATABASE_URL
+      value: "postgresql://gia:$(POSTGRES_USER_PASSWORD)@gia-postgresql:5432/gia"
+  envFrom:
+    - secretRef:
+        name: secret-env
+    # - configMapRef:
+    #     name: cm
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: &host gia-api.k8s.devmem.ru
+        paths:
+          - path: /
+    tls:
+      - hosts:
+          - *host
+        secretName: gia-api-tls
+  serviceMonitor:
+    create: true
+  jobs:
+      # This jobs will be created and executed on every sync
+      # at the same time as the application of the manifests.
+    - name: migrate
+      enabled: true
+      argocdHook: true
+      hookWeight: 0
+      args: ["python", "manage.py", "migrate"]
+    - name: invalidate
+      enabled: true
+      argocdHook: true
+      hookWeight: 1
+      args: ["python", "manage.py", "invalidate", "all"]
+      # This jobs will only be created and executed once.
+      # https://argo-cd.readthedocs.io/en/stable/user-guide/resource_hooks/#generate-name
+    - name: init-loaddata
+      enabled: true
+      hook: post-install
+      hookDeletePolicy: hook-failed
+      hookWeight: 2
+      args: ["python", "manage.py", "loaddata", "datasource"]
+    - name: init-runjobs
+      enabled: true
+      hook: post-install
+      hookWeight: 3
+      hookDeletePolicy: hook-failed
+      args: ["python", "manage.py", "runjobs", "hourly"]
+  cronjobs:
+    - name: runjobs
+      enabled: true
+      schedule: "03 * * * *"
+      args: ["python", "manage.py", "runjobs", "hourly"]
+    - name: clearsessions
+      enabled: true
+      schedule: "05 0 * * *"
+      args: ["python", "manage.py", "clearsessions"]
+
+front:
+  name: front
+  replicaCount: 1
+  image:
+    repository: git.devmem.ru/projects/gia-front
+    tag: latest
+  containerPort: 80
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: &host gia.k8s.devmem.ru
+        paths:
+          - path: /
+    tls:
+      - hosts:
+          - *host
+        secretName: gia-front-tls
+
+postgresql:
+  architecture: standalone
+  auth:
+    username: gia
+    database: gia
+    existingSecret: secret-env
+    secretKeys:
+      adminPasswordKey: POSTGRES_PASSWORD
+      userPasswordKey: POSTGRES_USER_PASSWORD
+  primary:
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      size: 2Gi
+
+redis:
+  architecture: standalone
+  auth:
+    enabled: false
+  commonConfiguration: |-
+    maxmemory 512mb
+    maxmemory-policy allkeys-lru
+    stop-writes-on-bgsave-error no
+  master:
+    disableCommands: []
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      size: 1Gi

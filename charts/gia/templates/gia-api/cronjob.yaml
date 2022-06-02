@@ -1,0 +1,47 @@
+{{- range $index, $cronjob := .Values.api.cronjobs }}
+{{- if $cronjob.enabled }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "gia.api.fullname" $ }}-cronjob-{{ $cronjob.name }}
+  labels:
+    {{- include "gia.labels" (dict "context" $ "component" $.Values.api.name "name" $.Values.api.name) | nindent 4 }}
+spec:
+  schedule: {{ $cronjob.schedule | quote }}
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    metadata:
+      labels:
+        {{- include "gia.labels" (dict "context" $ "component" $.Values.api.name "name" $.Values.api.name) | nindent 8 }}
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "gia.labels" (dict "context" $ "component" $.Values.api.name "name" $.Values.api.name) | nindent 12 }}
+        spec:
+          {{- with $.Values.global.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml $.Values.global.podSecurityContext | nindent 12 }}
+          containers:
+            - name: {{ $.Values.api.name }}
+              securityContext:
+                {{- toYaml $.Values.global.securityContext | nindent 16 }}
+              image: "{{ $.Values.api.image.repository }}:{{ $.Values.api.image.tag | default $.Chart.AppVersion }}"
+              imagePullPolicy: {{ default $.Values.global.imagePullPolicy $.Values.api.image.imagePullPolicy }}
+              args:
+                {{- range $cronjob.args }}
+                - {{ . | quote }}
+                {{- end }}
+              {{- with $.Values.api.env }}
+              env: {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- with $.Values.api.envFrom }}
+              envFrom: {{- toYaml . | nindent 16 }}
+              {{- end }}
+          restartPolicy: Never
+{{- end }}
+{{- end }}

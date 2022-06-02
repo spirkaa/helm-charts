@@ -1,0 +1,14 @@
+{{- if .Values.api.serviceMonitor.create -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "gia.api.fullname" . }}
+  labels:
+    {{- include "gia.labels" (dict "context" . "component" .Values.api.name "name" .Values.api.name) | nindent 4 }}
+spec:
+  endpoints:
+    - port: http
+  selector:
+    matchLabels:
+      {{- include "gia.labels" (dict "context" . "component" .Values.api.name "name" .Values.api.name) | nindent 6 }}
+{{- end }}

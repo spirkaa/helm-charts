@@ -1,0 +1,51 @@
+{{- range $index, $job := .Values.api.jobs }}
+{{- if $job.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "gia.api.fullname" $ }}-job-{{ $job.name }}
+  labels:
+    {{- include "gia.labels" (dict "context" $ "component" $.Values.api.name "name" $.Values.api.name) | nindent 4 }}
+  annotations:
+    {{- if $job.argocdHook }}
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: {{ default "BeforeHookCreation,HookSucceeded" $job.argocdHookDeletePolicy }}
+    argocd.argoproj.io/sync-wave: {{ $job.hookWeight | default "0" | quote }}
+    {{- else }}
+    "helm.sh/hook": {{ default "post-install,post-upgrade" $job.hook }}
+    "helm.sh/hook-delete-policy": {{ default "before-hook-creation,hook-succeeded" $job.hookDeletePolicy }}
+    "helm.sh/hook-weight": {{ $job.hookWeight | default "0" | quote }}
+    {{- end }}
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        {{- include "gia.labels" (dict "context" $ "component" $.Values.api.name "name" $.Values.api.name) | nindent 8 }}
+    spec:
+      {{- with $.Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml $.Values.global.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ $.Values.api.name }}
+          securityContext:
+            {{- toYaml $.Values.global.securityContext | nindent 12 }}
+          image: "{{ $.Values.api.image.repository }}:{{ $.Values.api.image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ default $.Values.global.imagePullPolicy $.Values.api.image.imagePullPolicy }}
+          args:
+            {{- range $job.args }}
+            - {{ . | quote }}
+            {{- end }}
+          {{- with $.Values.api.env }}
+          env: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $.Values.api.envFrom }}
+          envFrom: {{- toYaml . | nindent 12 }}
+          {{- end }}
+      restartPolicy: Never
+{{- end }}
+{{- end }}

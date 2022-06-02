@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "gia.front.fullname" . }}
+  labels:
+    {{- include "gia.labels" (dict "context" . "component" .Values.front.name "name" .Values.front.name) | nindent 4 }}
+    app.kubernetes.io/version: {{ .Values.front.image.tag | quote }}
+spec:
+  replicas: {{ .Values.front.replicaCount }}
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      {{- include "gia.selectorLabels" (dict "context" . "name" .Values.front.name) | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.global.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "gia.labels" (dict "context" . "component" .Values.front.name "name" .Values.front.name) | nindent 8 }}
+        app.kubernetes.io/version: {{ .Values.front.image.tag | quote }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.global.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Values.front.name }}
+          securityContext:
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
+          image: "{{ .Values.front.image.repository }}:{{ .Values.front.image.tag | default "latest" }}"
+          imagePullPolicy: {{ default .Values.global.imagePullPolicy .Values.front.image.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.front.containerPort }}
+              protocol: TCP
+          {{- with .Values.front.env }}
+          env: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.front.envFrom }}
+          envFrom: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+          resources:
+            {{- toYaml .Values.front.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

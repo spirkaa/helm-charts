@@ -37,7 +37,9 @@ pipeline {
 
                   # Lint & package charts (all at once)
                   find ./charts -maxdepth 1 -mindepth 1 -type d -print0 | \
-                    xargs -0 sh -c 'helm lint "$@" && helm package -d _output "$@"' sh
+                  xargs -0 sh -c 'for chart in $@; do helm dependency update "$chart"; done \
+                    && helm lint "$@" \
+                    && helm package -d _output "$@"' sh
 
                   # Upload charts (one by one)
                   find ./_output -type f -print0 | \
