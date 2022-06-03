@@ -93,14 +93,14 @@ api:
       # This jobs will only be created and executed once.
       # https://argo-cd.readthedocs.io/en/stable/user-guide/resource_hooks/#generate-name
     - name: init-loaddata
-      enabled: true
+      enabled: false
       hookWeight: 2
       hook: PostSync
       hookDeletePolicy: HookFailed
       helmHook: post-install
       args: ["python", "manage.py", "loaddata", "datasource"]
     - name: init-runjobs
-      enabled: true
+      enabled: false
       hookWeight: 3
       hook: PostSync
       hookDeletePolicy: HookFailed
@@ -147,6 +147,23 @@ front:
           - *host
         secretName: gia-front-tls
 
+pgbackrest:
+  enabled: true
+  name: pgbackrest
+  image:
+    repository: git.devmem.ru/projects/kubectl
+    tag: latest
+  cronjobs:
+    - name: full
+      enabled: true
+      schedule: "01 23 * * 0"
+    - name: diff
+      enabled: true
+      schedule: "01 23 * * 1-6"
+    - name: incr
+      enabled: true
+      schedule: "01 3,7,11,15,19 * * *"
+
 postgresql:
   architecture: standalone
   auth:
@@ -157,6 +174,10 @@ postgresql:
       adminPasswordKey: POSTGRES_PASSWORD
       userPasswordKey: POSTGRES_USER_PASSWORD
   primary:
+    extraEnvVarsSecret: pgbackrest
+    extendedConfiguration: |-
+      archive_command = 'pgbackrest --stanza=gia archive-push %p'
+      archive_mode = on
     persistence:
       enabled: true
       storageClass: longhorn

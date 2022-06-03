@@ -38,6 +38,13 @@ Create gia-front name.
 {{- end }}
 
 {{/*
+Create pgbackrest name.
+*/}}
+{{- define "gia.pgbackrest.fullname" -}}
+{{- printf "%s-%s" (include "gia.fullname" .) .Values.pgbackrest.name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "gia.chart" -}}
