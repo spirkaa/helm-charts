@@ -43,8 +43,7 @@ spec:
                     -n {{ $.Release.Namespace }} \
                     -l app.kubernetes.io/instance={{ $.Release.Name }} \
                     -l app.kubernetes.io/component=primary \
-                    -o json | \
-                    jq -r '.items[0].metadata.name'
+                    -o jsonpath='{.items[0].metadata.name}'
                   )
                   kubectl -n {{ $.Release.Namespace }} exec $POD -c postgresql -- \
                     sh -c ' \
