@@ -1,13 +1,16 @@
 replicaCount: 1
 
+nameOverride: ""
+fullnameOverride: ""
+
 image:
   repository: git.devmem.ru/projects/samgrabby
+  tag: ""
   pullPolicy: Always
+containerPort: 5000
 
 imagePullSecrets:
   - name: regcred
-nameOverride: ""
-fullnameOverride: ""
 
 env:
   - name: POD_IP
@@ -19,31 +22,13 @@ env:
   - name: DJANGO_SETTINGS_MODULE
     value: "config.settings.production"
   - name: DJANGO_ALLOWED_HOSTS
-    value: "soft.k8s.devmem.ru"
+    value: "soft.devmem.ru"
 
 envFrom:
   - secretRef:
       name: secret-env
   # - configMapRef:
   #     name: cm
-
-serviceAccount:
-  create: true
-  annotations: {}
-  name: ""
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 1000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #     - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 service:
   type: ClusterIP
@@ -55,7 +40,7 @@ ingress:
   annotations:
     kubernetes.io/tls-acme: "true"
   hosts:
-    - host: &host soft.k8s.devmem.ru
+    - host: &host soft.devmem.ru
       paths:
         - path: /
   tls:
@@ -71,8 +56,16 @@ resources:
   #   cpu: 200m
   #   memory: 512Mi
 
+podAnnotations: {}
+podSecurityContext: {}
+  # fsGroup: 1000
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #     - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}
