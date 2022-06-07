@@ -1,0 +1,65 @@
+replicaCount: 1
+
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: git.devmem.ru/projects/devmem-ru
+  tag: ""
+  pullPolicy: Always
+containerPort: 80
+
+imagePullSecrets:
+  - name: regcred
+
+env: []
+  # - name: POD_IP
+  #   valueFrom:
+  #     fieldRef:
+  #       fieldPath: status.podIP
+
+envFrom: []
+  # - secretRef:
+  #     name: secret-env
+  # - configMapRef:
+  #     name: cm
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: &host devmem.ru
+      paths:
+        - path: /
+  tls:
+    - hosts:
+        - *host
+      secretName: devmem-ru-tls
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+podAnnotations: {}
+podSecurityContext: {}
+  # fsGroup: 1000
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #     - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+nodeSelector: {}
+tolerations: []
+affinity: {}
