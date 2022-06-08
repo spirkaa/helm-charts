@@ -33,7 +33,7 @@ api:
     - name: DJANGO_SETTINGS_MODULE
       value: "config.settings.production"
     - name: DJANGO_ALLOWED_HOSTS
-      value: "gia-api.k8s.devmem.ru"
+      value: "gia-api.devmem.ru"
     - name: DJANGO_LOG_LEVEL
       value: "DEBUG"
     - name: DJANGO_ADMIN_URL
@@ -68,8 +68,15 @@ api:
     ingressClassName: nginx
     annotations:
       kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/server-snippet: |
+          location /metrics {
+              allow 10.0.0.0/8;
+              allow 172.16.0.0/12;
+              allow 192.168.0.0/16;
+              deny all;
+          }
     hosts:
-      - host: &host gia-api.k8s.devmem.ru
+      - host: &host gia-api.devmem.ru
         paths:
           - path: /
     tls:
@@ -139,7 +146,7 @@ front:
     annotations:
       kubernetes.io/tls-acme: "true"
     hosts:
-      - host: &host gia.k8s.devmem.ru
+      - host: &host gia.devmem.ru
         paths:
           - path: /
     tls:
