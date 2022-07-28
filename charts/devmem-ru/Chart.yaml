@@ -5,8 +5,8 @@ description: A Helm chart for devmem-ru
 home: https://devmem.ru
 sources:
   - https://git.devmem.ru/projects/devmem-ru
-version: 0.1.0
-appVersion: "d41a599"
+version: 0.1.1
+appVersion: "a48006f"
 maintainers:
   - name: Ilya Pavlov
     email: piv@devmem.ru
