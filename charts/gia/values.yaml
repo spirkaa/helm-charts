@@ -189,6 +189,10 @@ postgresql:
       enabled: true
       storageClass: longhorn
       size: 2Gi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
 
 redis:
   architecture: standalone
@@ -204,3 +208,7 @@ redis:
       enabled: true
       storageClass: longhorn
       size: 1Gi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
