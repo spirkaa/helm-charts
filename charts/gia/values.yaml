@@ -172,6 +172,10 @@ pgbackrest:
       schedule: "01 3,7,11,15,19 * * *"
 
 postgresql:
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: 14.6.0-debian-11-r12
   architecture: standalone
   auth:
     username: gia
@@ -191,6 +195,10 @@ postgresql:
       size: 2Gi
   metrics:
     enabled: true
+    image:
+      registry: docker.io
+      repository: bitnami/postgres-exporter
+      tag: 0.11.1-debian-11-r39
     serviceMonitor:
       enabled: true
 
