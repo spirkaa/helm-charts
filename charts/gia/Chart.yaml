@@ -6,7 +6,7 @@ home: https://gia.devmem.ru
 sources:
   - https://git.devmem.ru/projects/gia-api
   - https://git.devmem.ru/projects/gia-front
-version: 0.4.5
+version: 0.4.6
 appVersion: "72a97b2-k8s"
 maintainers:
   - name: Ilya Pavlov
@@ -17,5 +17,5 @@ dependencies:
     version: 11.9.13
     repository: https://charts.bitnami.com/bitnami
   - name: redis
-    version: 17.11.2
+    version: 17.15.2
     repository: https://charts.bitnami.com/bitnami

@@ -175,7 +175,7 @@ postgresql:
   image:
     registry: docker.io
     repository: bitnami/postgresql
-    tag: 14.8.0-debian-11-r2
+    tag: 14.9.0-debian-11-r12
   architecture: standalone
   auth:
     username: gia
@@ -198,7 +198,7 @@ postgresql:
     image:
       registry: docker.io
       repository: bitnami/postgres-exporter
-      tag: 0.12.0-debian-11-r88
+      tag: 0.13.2-debian-11-r30
     serviceMonitor:
       enabled: true
 
