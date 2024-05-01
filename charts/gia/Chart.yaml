@@ -6,8 +6,8 @@ home: https://gia.devmem.ru
 sources:
   - https://git.devmem.ru/projects/gia-api
   - https://git.devmem.ru/projects/gia-front
-version: 0.4.12
-appVersion: "05610df-k8s"
+version: 0.4.13
+appVersion: "b535a91-k8s"
 maintainers:
   - name: Ilya Pavlov
     email: piv@devmem.ru
