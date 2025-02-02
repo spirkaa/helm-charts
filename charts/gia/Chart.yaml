@@ -15,7 +15,7 @@ maintainers:
 dependencies:
   - name: postgresql
     version: 11.9.13
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/refs/heads/archive-full-index/bitnami/
   - name: redis
     version: 17.15.2
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/refs/heads/archive-full-index/bitnami/
