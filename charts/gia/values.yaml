@@ -228,7 +228,7 @@ cluster:
   version:
     postgresql: "17"
   cluster:
-    instances: 1
+    instances: 2
     storage:
       size: 2Gi
       storageClass: longhorn
@@ -243,6 +243,10 @@ cluster:
       requests:
         cpu: 50m
         memory: 512Mi
+    affinity:
+      enablePodAntiAffinity: true
+      podAntiAffinityType: preferred
+      topologyKey: kubernetes.io/hostname
     monitoring:
       enabled: true
   backups:
@@ -255,6 +259,14 @@ cluster:
     secret:
       create: false
       name: cnpg-backup-s3-creds
+    wal:
+      compression: gzip
+      encryption: ""
+      maxParallel: 1
+    data:
+      compression: gzip
+      encryption: ""
+      jobs: 2
     scheduledBackups:
       - name: weekly
         schedule: "01 23 * * 3"
