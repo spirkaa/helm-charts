@@ -222,6 +222,7 @@ redis:
       enabled: true
 
 cluster:
+  fullnameOverride: gia-db
   type: postgresql
   mode: standalone
   version:
@@ -251,13 +252,11 @@ cluster:
     s3:
       bucket: gia
       path: /cnpg
-      accessKey: PGBACKREST_REPO1_S3_KEY
-      secretKey: PGBACKREST_REPO1_S3_KEY_SECRET
     secret:
       create: false
-      name: pgbackrest
+      name: cnpg-backup-s3-creds
     scheduledBackups:
-      - name: daily
-        schedule: "01 23 * * *"
+      - name: weekly
+        schedule: "01 23 * * 3"
         backupOwnerReference: self
     retentionPolicy: "30d"
