@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/version: {{ .Values.front.image.tag | quote }}
 spec:
   replicas: {{ .Values.front.replicaCount }}
-  revisionHistoryLimit: 5
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       {{- include "gia.selectorLabels" (dict "context" . "name" .Values.front.name) | nindent 6 }}

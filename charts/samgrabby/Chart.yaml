@@ -5,7 +5,7 @@ description: A Helm chart for samgrabby
 home: https://soft.devmem.ru
 sources:
   - https://git.devmem.ru/projects/samgrabby
-version: 0.1.10
+version: 0.1.11
 appVersion: "dadd916"
 maintainers:
   - name: Ilya Pavlov
