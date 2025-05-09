@@ -262,7 +262,6 @@ cluster:
       path: /cnpg
     secret:
       create: false
-      name: cnpg-backup-s3-creds
     wal:
       compression: gzip
       encryption: ""
