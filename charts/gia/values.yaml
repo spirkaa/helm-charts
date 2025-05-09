@@ -231,7 +231,8 @@ cluster:
     method: import
     import:
       type: microservice
-      databases: gia
+      databases:
+        - gia
       source:
         host: gia-postgresql
         port: 5432
