@@ -224,28 +224,27 @@ redis:
 cluster:
   fullnameOverride: gia-db
   type: postgresql
-  mode: recovery
+  mode: standalone
   version:
     postgresql: "17"
-  recovery:
-    method: import
-    import:
-      type: microservice
-      databases:
-        - gia
-      source:
-        host: gia-postgresql
-        port: 5432
-        username: postgres
-        database: postgres
-        sslMode: disable
-        passwordSecret:
-          create: false
-          name: secret-env
-          key: POSTGRES_PASSWORD
-
+  # recovery:
+  #   method: import
+  #   import:
+  #     type: microservice
+  #     databases:
+  #       - gia
+  #     source:
+  #       host: gia-postgresql
+  #       port: 5432
+  #       username: postgres
+  #       database: postgres
+  #       sslMode: disable
+  #       passwordSecret:
+  #         create: false
+  #         name: secret-env
+  #         key: POSTGRES_PASSWORD
   cluster:
-    instances: 2
+    instances: 1
     storage:
       size: 2Gi
       storageClass: longhorn
