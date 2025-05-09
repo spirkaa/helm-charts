@@ -157,54 +157,6 @@ front:
           - *host
         secretName: gia-front-tls
 
-pgbackrest:
-  enabled: true
-  name: pgbackrest
-  image:
-    repository: git.devmem.ru/projects/kubectl
-    tag: latest
-  cronjobs:
-    - name: full
-      enabled: true
-      schedule: "01 23 * * 0"
-    - name: diff
-      enabled: true
-      schedule: "01 23 * * 1-6"
-    - name: incr
-      enabled: true
-      schedule: "01 3,7,11,15,19 * * *"
-
-postgresql:
-  image:
-    registry: docker.io
-    repository: bitnami/postgresql
-    tag: 14.9.0-debian-11-r12
-  architecture: standalone
-  auth:
-    username: gia
-    database: gia
-    existingSecret: secret-env
-    secretKeys:
-      adminPasswordKey: POSTGRES_PASSWORD
-      userPasswordKey: POSTGRES_USER_PASSWORD
-  primary:
-    extraEnvVarsSecret: pgbackrest
-    extendedConfiguration: |-
-      archive_command = 'pgbackrest --stanza=gia archive-push %p'
-      archive_mode = on
-    persistence:
-      enabled: true
-      storageClass: longhorn
-      size: 2Gi
-  metrics:
-    enabled: true
-    image:
-      registry: docker.io
-      repository: bitnami/postgres-exporter
-      tag: 0.13.2-debian-11-r30
-    serviceMonitor:
-      enabled: true
-
 redis:
   architecture: standalone
   auth:
@@ -230,22 +182,6 @@ cluster:
   mode: standalone
   version:
     postgresql: "17"
-  # recovery:
-  #   method: import
-  #   import:
-  #     type: microservice
-  #     databases:
-  #       - gia
-  #     source:
-  #       host: gia-postgresql
-  #       port: 5432
-  #       username: postgres
-  #       database: postgres
-  #       sslMode: disable
-  #       passwordSecret:
-  #         create: false
-  #         name: secret-env
-  #         key: POSTGRES_PASSWORD
   cluster:
     instances: 2
     storage:
