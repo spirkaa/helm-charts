@@ -249,9 +249,10 @@ cluster:
       topologyKey: kubernetes.io/hostname
     monitoring:
       enabled: true
-      excludeRules:
-        - CNPGClusterHAWarning
-        - CNPGClusterZoneSpreadWarning
+      prometheusRule:
+        excludeRules:
+          - CNPGClusterHAWarning
+          - CNPGClusterZoneSpreadWarning
   backups:
     enabled: true
     endpointURL: https://s3.home.devmem.ru
