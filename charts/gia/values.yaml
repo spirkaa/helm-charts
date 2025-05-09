@@ -249,6 +249,9 @@ cluster:
       topologyKey: kubernetes.io/hostname
     monitoring:
       enabled: true
+      excludeRules:
+        - CNPGClusterHAWarning
+        - CNPGClusterZoneSpreadWarning
   backups:
     enabled: true
     endpointURL: https://s3.home.devmem.ru
@@ -269,6 +272,6 @@ cluster:
       jobs: 2
     scheduledBackups:
       - name: weekly
-        schedule: "01 23 * * 3"
+        schedule: "0 1 23 * * 3"
         backupOwnerReference: self
     retentionPolicy: "30d"
