@@ -220,3 +220,44 @@ redis:
     enabled: true
     serviceMonitor:
       enabled: true
+
+cluster:
+  type: postgresql
+  mode: standalone
+  version:
+    postgresql: "17"
+  cluster:
+    instances: 1
+    storage:
+      size: 2Gi
+      storageClass: longhorn
+    walStorage:
+      enabled: true
+      size: 1Gi
+      storageClass: longhorn
+    resources:
+      limits:
+        cpu: '2'
+        memory: 512Mi
+      requests:
+        cpu: 50m
+        memory: 512Mi
+    monitoring:
+      enabled: true
+  backups:
+    enabled: true
+    endpointURL: https://s3.home.devmem.ru
+    provider: s3
+    s3:
+      bucket: gia
+      path: /cnpg
+      accessKey: PGBACKREST_REPO1_S3_KEY
+      secretKey: PGBACKREST_REPO1_S3_KEY_SECRET
+    secret:
+      create: false
+      name: pgbackrest
+    scheduledBackups:
+      - name: daily
+        schedule: "01 23 * * *"
+        backupOwnerReference: self
+    retentionPolicy: "30d"
