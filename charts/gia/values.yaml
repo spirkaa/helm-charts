@@ -47,7 +47,10 @@ api:
     - name: DJANGO_CACHE_URL
       value: "redis://gia-redis-master:6379/1"
     - name: DJANGO_DATABASE_URL
-      value: "postgresql://gia:$(POSTGRES_USER_PASSWORD)@gia-postgresql:5432/gia"
+      valueFrom:
+        secretKeyRef:
+          name: gia-db-app
+          key: uri
   envFrom:
     - secretRef:
         name: secret-env
@@ -244,7 +247,7 @@ cluster:
   #         name: secret-env
   #         key: POSTGRES_PASSWORD
   cluster:
-    instances: 1
+    instances: 2
     storage:
       size: 2Gi
       storageClass: longhorn
