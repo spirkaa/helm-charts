@@ -98,7 +98,7 @@ api:
       hookWeight: 1
       args: ["python", "manage.py", "invalidate", "all"]
       # This jobs will only be created and executed once.
-      # https://argo-cd.readthedocs.io/en/stable/user-guide/resource_hooks/#generate-name
+      # https://argo-cd.readthedocs.io/en/stable/user-guide/resource_hooks/
     - name: init-loaddata
       enabled: false
       hookWeight: 2
@@ -224,9 +224,25 @@ redis:
 cluster:
   fullnameOverride: gia-db
   type: postgresql
-  mode: standalone
+  mode: recovery
   version:
     postgresql: "17"
+  recovery:
+    method: import
+    import:
+      type: microservice
+      databases: gia
+      source:
+        host: gia-postgresql
+        port: 5432
+        username: postgres
+        database: postgres
+        sslMode: disable
+        passwordSecret:
+          create: false
+          name: secret-env
+          key: POSTGRES_PASSWORD
+
   cluster:
     instances: 2
     storage:
