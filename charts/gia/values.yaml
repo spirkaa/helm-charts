@@ -157,25 +157,6 @@ front:
           - *host
         secretName: gia-front-tls
 
-redis:
-  architecture: standalone
-  auth:
-    enabled: false
-  commonConfiguration: |-
-    maxmemory 512mb
-    maxmemory-policy allkeys-lru
-    stop-writes-on-bgsave-error no
-  master:
-    disableCommands: []
-    persistence:
-      enabled: true
-      storageClass: longhorn
-      size: 1Gi
-  metrics:
-    enabled: true
-    serviceMonitor:
-      enabled: true
-
 cluster:
   fullnameOverride: gia-db
   type: postgresql
@@ -230,3 +211,41 @@ cluster:
         schedule: "0 1 23 * * 3"
         backupOwnerReference: self
     retentionPolicy: "30d"
+
+redis:
+  architecture: standalone
+  auth:
+    enabled: false
+  commonConfiguration: |-
+    maxmemory 512mb
+    maxmemory-policy allkeys-lru
+    stop-writes-on-bgsave-error no
+  master:
+    revisionHistoryLimit: 2
+    disableCommands: []
+    resources:
+      limits:
+        cpu: '2'
+        memory: 512Mi
+        ephemeral-storage: 2Gi
+      requests:
+        cpu: 10m
+        memory: 512Mi
+        ephemeral-storage: 50Mi
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      size: 1Gi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+    resources:
+      limits:
+        cpu: '2'
+        memory: 128Mi
+        ephemeral-storage: 2Gi
+      requests:
+        cpu: 10m
+        memory: 32Mi
+        ephemeral-storage: 50Mi
