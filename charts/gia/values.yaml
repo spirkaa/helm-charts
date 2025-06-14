@@ -239,10 +239,8 @@ cluster17:
     instances: 1
     imagePullPolicy: Always
     initdb:
-      localeProvider: icu
-      icuLocale: ru-x-icu
-      localeCollate: ""
-      localeCType: ""
+      localeCollate: en_US.utf8
+      localeCType: en_US.utf8
     storage:
       size: 2Gi
       storageClass: longhorn
