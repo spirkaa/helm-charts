@@ -220,6 +220,10 @@ cluster17:
   recovery:
     method: backup
     backupName: gia-db-20250614133518
+    endpointURL: https://s3.home.devmem.ru
+    s3:
+      bucket: gia
+      path: /gia-db
   version:
     postgresql: "17"
   cluster:
