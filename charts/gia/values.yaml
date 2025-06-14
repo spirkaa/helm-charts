@@ -49,7 +49,7 @@ api:
     - name: DJANGO_DATABASE_URL
       valueFrom:
         secretKeyRef:
-          name: gia-db-app
+          name: gia-db17-app
           key: uri
   envFrom:
     - secretRef:
