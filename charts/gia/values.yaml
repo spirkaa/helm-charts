@@ -241,8 +241,8 @@ cluster17:
     initdb:
       localeProvider: icu
       icuLocale: ru-x-icu
-      localeCollate: ru-x-icu
-      localeCType: ru-x-icu
+      localeCollate: ""
+      localeCType: ""
     storage:
       size: 2Gi
       storageClass: longhorn
