@@ -218,12 +218,21 @@ cluster17:
   type: postgresql
   mode: recovery
   recovery:
-    method: backup
-    backupName: gia-db-20250614133518
-    endpointURL: https://s3.home.devmem.ru
-    s3:
-      bucket: gia
-      path: /gia-db
+    method: import
+    import:
+      type: microservice
+      databases:
+        - app
+      source:
+        host: gia-db-rw
+        port: 5432
+        username: postgres
+        database: postgres
+        sslMode: disable
+        passwordSecret:
+          create: false
+          name: gia-db-superuser
+          key: password
   version:
     postgresql: "17"
   cluster:
