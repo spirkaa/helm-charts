@@ -221,7 +221,7 @@ redis:
   auth:
     enabled: false
   commonConfiguration: |-
-    maxmemory 512mb
+    maxmemory 500mb
     maxmemory-policy allkeys-lru
     stop-writes-on-bgsave-error no
   master:
@@ -239,7 +239,7 @@ redis:
     persistence:
       enabled: true
       storageClass: longhorn
-      size: 1Gi
+      size: 2Gi
   metrics:
     enabled: true
     serviceMonitor:

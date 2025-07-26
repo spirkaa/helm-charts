@@ -6,7 +6,7 @@ home: https://gia.devmem.ru
 sources:
   - https://git.devmem.ru/projects/gia-api
   - https://git.devmem.ru/projects/gia-front
-version: 0.7.13
+version: 0.7.14
 appVersion: "6eef539-k8s"
 maintainers:
   - name: Ilya Pavlov
@@ -18,5 +18,5 @@ dependencies:
     version: 0.3.1
     repository: https://cloudnative-pg.github.io/charts
   - name: redis
-    version: 21.2.3
+    version: 21.2.13
     repository: https://raw.githubusercontent.com/bitnami/charts/refs/heads/archive-full-index/bitnami/
