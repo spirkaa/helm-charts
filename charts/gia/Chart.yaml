@@ -18,5 +18,5 @@ dependencies:
     version: 0.3.1
     repository: https://cloudnative-pg.github.io/charts
   - name: redis
-    version: 21.2.13
+    version: 21.2.14
     repository: https://raw.githubusercontent.com/bitnami/charts/refs/heads/archive-full-index/bitnami/
