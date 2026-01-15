@@ -221,7 +221,7 @@ redis:
   auth:
     enabled: false
   commonConfiguration: |-
-    maxmemory 500mb
+    maxmemory 480mb
     maxmemory-policy allkeys-lru
     stop-writes-on-bgsave-error no
   master:
