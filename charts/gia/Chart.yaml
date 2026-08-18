@@ -15,7 +15,7 @@ maintainers:
 dependencies:
   - name: cluster
     alias: cluster17r
-    version: 0.7.0
+    version: 0.8.1
     repository: https://cloudnative-pg.github.io/charts
   - name: redis
     version: 27.0.15
