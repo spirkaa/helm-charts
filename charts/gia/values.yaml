@@ -221,7 +221,7 @@ redis:
   auth:
     enabled: false
   commonConfiguration: |-
-    maxmemory 480mb
+    maxmemory 1000mb
     maxmemory-policy allkeys-lru
     stop-writes-on-bgsave-error no
   master:
@@ -230,11 +230,11 @@ redis:
     resources:
       limits:
         cpu: '2'
-        memory: 512Mi
+        memory: 1Gi
         ephemeral-storage: 2Gi
       requests:
         cpu: 10m
-        memory: 512Mi
+        memory: 1Gi
         ephemeral-storage: 50Mi
     persistence:
       enabled: true
